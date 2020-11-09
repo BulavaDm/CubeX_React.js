@@ -1,2 +1,2 @@
-# CubeX_React.js
+# CubeX_React
 Created with CodeSandbox

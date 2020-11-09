@@ -1,0 +1,25 @@
+button:hover {
+  cursor: pointer;
+}
+
+.element {
+  margin-bottom: 10px;
+}
+
+.element button {
+  margin-right: 10px;
+}
+
+.element__item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.form {
+  margin-top: 10px;
+}
+
+.form input {
+  margin: 0 10px;
+}
