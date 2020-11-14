@@ -1,41 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { store } from "../store";
 import { actionTypes } from "../store/actionTypes.js";
 import PropTypes from "prop-types";
 
-class FormList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      text: "",
-      error: ""
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.createElement = this.createElement.bind(this);
-    this.generateId = this.generateId.bind(this);
-    this.clearForm = this.clearForm.bind(this);
-  }
+function FormList(props) {
+  const [state, setState] = useState({ text: "", error: "" });
 
-  handleChange(e) {
-    if (this.state.error) {
-      this.setState({ error: "" });
+  function handleChange(e) {
+    if (state.error) {
+      setState((prevState) => {
+        return { ...prevState, error: "" };
+      });
     }
 
-    this.setState({ text: e.target.value });
+    setState((prevState) => {
+      return { ...prevState, text: e.target.value };
+    });
   }
 
-  createElement(parentId) {
-    if (!this.state.text) {
-      this.setState({ error: "Enter at least one character" });
+  function createElement(parentId) {
+    if (!state.text) {
+      setState((prevState) => {
+        return { ...prevState, error: "Enter a least one more character" };
+      });
       return;
     }
 
-    const id = this.generateId();
+    const id = generateId();
 
     const element = {
       id: id,
       parentId: parentId,
-      name: this.state.text
+      name: state.text
     };
 
     store.dispatch({
@@ -45,35 +41,35 @@ class FormList extends React.Component {
     store.dispatch({
       type: actionTypes.LIST_TO_TREE
     });
-    this.clearForm();
+    clearForm();
   }
 
-  generateId() {
+  function generateId() {
     return Date.now();
   }
 
-  clearForm() {
-    this.setState({ text: "" });
+  function clearForm() {
+    setState((prevState) => {
+      return { ...prevState, text: "" };
+    });
   }
 
-  render() {
-    return (
-      <form className="form">
-        <label>
-          Element of list:
-          <input
-            type="text"
-            value={this.state.text}
-            placeholder={this.state.error}
-            onChange={this.handleChange}
-          />
-        </label>
-        <button type="button" onClick={() => this.createElement(this.props.id)}>
-          ADD
-        </button>
-      </form>
-    );
-  }
+  return (
+    <form className="form">
+      <label>
+        Element of list:
+        <input
+          type="text"
+          value={state.text}
+          placeholder={state.error}
+          onChange={handleChange}
+        />
+      </label>
+      <button type="button" onClick={() => createElement(props.id)}>
+        ADD
+      </button>
+    </form>
+  );
 }
 
 FormList.propTypes = {
