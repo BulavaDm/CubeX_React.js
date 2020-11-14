@@ -3,7 +3,7 @@ import { store } from "../store";
 import { actionTypes } from "../store/actionTypes.js";
 import PropTypes from "prop-types";
 
-function FormList(props) {
+function FormList({ id }) {
   const [state, setState] = useState({ text: "", error: "" });
 
   function handleChange(e) {
@@ -21,7 +21,7 @@ function FormList(props) {
   function createElement(parentId) {
     if (!state.text) {
       setState((prevState) => {
-        return { ...prevState, error: "Enter a least one more character" };
+        return { ...prevState, error: "Enter a least one character" };
       });
       return;
     }
@@ -65,7 +65,7 @@ function FormList(props) {
           onChange={handleChange}
         />
       </label>
-      <button type="button" onClick={() => createElement(props.id)}>
+      <button type="button" onClick={() => createElement(id)}>
         ADD
       </button>
     </form>

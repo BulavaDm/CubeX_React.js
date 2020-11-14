@@ -2,7 +2,7 @@ import React from "react";
 import ElementList from "./ElementList.js";
 import PropTypes from "prop-types";
 
-export default function CustomList({ list }) {
+function CustomList({ list }) {
   return (
     <div>
       <ul>
@@ -34,3 +34,5 @@ CustomList.propTypes = {
 CustomList.defaultProps = {
   list: []
 };
+
+export default CustomList;

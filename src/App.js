@@ -1,35 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./styles.css";
 import CustomList from "./components/CustomList.js";
 import { store } from "./store";
 import { actionTypes } from "./store/actionTypes.js";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
+function App() {
+  const [list, setList] = useState([]);
 
-    this.state = {
-      recursiveList: []
-    };
-
-    store.subscribe(() => {
-      this.setState({
-        recursiveList: store.getState().recursiveList
-      });
-    });
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     store.dispatch({ type: actionTypes.LIST_TO_TREE });
-  }
+    setList(store.getState().recursiveList);
 
-  render() {
-    return (
-      <div>
-        <CustomList list={this.state.recursiveList} />
-      </div>
-    );
-  }
+    const unsubscribe = store.subscribe(() => {
+      setList(store.getState().recursiveList);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  return (
+    <div>
+      <CustomList list={list} />
+    </div>
+  );
 }
 
 export default App;
