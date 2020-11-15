@@ -34,26 +34,30 @@ function reducer(state = initialState, action) {
 
       return nextState;
     case actionTypes.CREATE_ELEMENT:
-      return { ...state, list: [...state.list, action.element] };
+      const stateForCreate = JSON.parse(JSON.stringify(state));
+      stateForCreate.list.push(action.element);
+
+      return stateForCreate;
     case actionTypes.REPLACE_ELEMENTS:
-      const stateForReplace = { ...state };
-      const list = [...stateForReplace.list];
+      const stateForReplace = JSON.parse(JSON.stringify(state));
+      const list = stateForReplace.list;
       const [index, targetIndex] = action.elementsIdToReplace;
 
       [list[index], list[targetIndex]] = [list[targetIndex], list[index]];
 
-      return { ...stateForReplace, list };
+      return stateForReplace;
     case actionTypes.REMOVE_ELEMENTS:
-      const idsForRemove = {};
+      const stateForRemove = JSON.parse(JSON.stringify(state));
 
       action.elementsId.forEach((id) => {
-        idsForRemove[id] = true;
+        const index = stateForRemove.list.findIndex((item) => {
+          return id === item.id;
+        });
+
+        stateForRemove.list.splice(index, 1);
       });
 
-      return {
-        ...state,
-        list: state.list.filter((item) => !idsForRemove[item.id])
-      };
+      return stateForRemove;
     default:
       return state;
   }
