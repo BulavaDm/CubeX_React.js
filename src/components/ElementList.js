@@ -1,43 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import FormList from "./FormList.js";
 import { store } from "../store";
 import { actionTypes } from "../store/actionTypes.js";
 import PropTypes from "prop-types";
 
-class ElementList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showForm: false
-    };
+function ElementList(props) {
+  const [showForm, setShowForm] = useState(false);
 
-    this.showInputForm = this.showInputForm.bind(this);
-    this.hideInputForm = this.hideInputForm.bind(this);
-    this.removeElements = this.removeElements.bind(this);
-    this.findChildren = this.findChildren.bind(this);
-    this.replaceElements = this.replaceElements.bind(this);
-    this.movingUpElement = this.movingUpElement.bind(this);
-    this.movingDownElement = this.movingDownElement.bind(this);
+  function showInputForm() {
+    setShowForm(true);
   }
 
-  showInputForm() {
-    this.setState({ showForm: true });
+  function hideInputForm() {
+    setShowForm(false);
   }
 
-  hideInputForm() {
-    this.setState({ showForm: false });
-  }
-
-  removeElements(item, isSubList) {
+  function removeElements(item, isSubList) {
     const childrenId = [];
 
-    this.findChildren(item.children, childrenId);
+    findChildren(item.children, childrenId);
 
     if (!isSubList) {
       childrenId.push(item.id);
     }
 
-    this.hideInputForm();
+    hideInputForm();
 
     store.dispatch({
       type: actionTypes.REMOVE_ELEMENTS,
@@ -50,7 +37,7 @@ class ElementList extends React.Component {
     childrenId.length = 0;
   }
 
-  findChildren(children, childrenId) {
+  function findChildren(children, childrenId) {
     children.forEach((item) => {
       childrenId.push(item.id);
 
@@ -60,25 +47,25 @@ class ElementList extends React.Component {
     });
   }
 
-  replaceElements(id, direction) {
+  function replaceElements(id, direction) {
     const list = store.getState().list;
     const index = list.findIndex((item) => item.id === id);
 
     switch (direction) {
       case "up":
-        this.movingUpElement(index, list);
+        movingUpElement(index, list);
         break;
       case "down":
-        this.movingDownElement(index, list);
+        movingDownElement(index, list);
         break;
       default:
         break;
     }
   }
 
-  movingUpElement(index, list) {
+  function movingUpElement(index, list) {
     for (let i = index - 1; i > -1; i--) {
-      if (list[i].parentId === this.props.parentId) {
+      if (list[i].parentId === props.parentId) {
         store.dispatch({
           type: actionTypes.REPLACE_ELEMENTS,
           elementsIdToReplace: [index, i]
@@ -91,9 +78,9 @@ class ElementList extends React.Component {
     }
   }
 
-  movingDownElement(index, list) {
+  function movingDownElement(index, list) {
     for (let i = index + 1; i < list.length; i++) {
-      if (list[i].parentId === this.props.parentId) {
+      if (list[i].parentId === props.parentId) {
         store.dispatch({
           type: actionTypes.REPLACE_ELEMENTS,
           elementsIdToReplace: [index, i]
@@ -106,57 +93,53 @@ class ElementList extends React.Component {
     }
   }
 
-  render() {
-    return (
-      <div className="element">
-        {this.props.parentId ? (
+  return (
+    <div className="element">
+      {props.parentId ? (
+        <div>
           <div>
-            <div>
-              <div className="element__item">{this.props.name}</div>
-            </div>
-            {this.props.notFirst ? (
-              <button
-                type="button"
-                onClick={() => this.replaceElements(this.props.id, "up")}
-              >
-                UP
-              </button>
-            ) : null}
-            {this.props.notLast ? (
-              <button
-                type="button"
-                onClick={() => this.replaceElements(this.props.id, "down")}
-              >
-                DOWN
-              </button>
-            ) : null}
+            <div className="element__item">{props.name}</div>
+          </div>
+          {props.notFirst ? (
             <button
               type="button"
-              onClick={() => this.removeElements(this.props.item, false)}
+              onClick={() => replaceElements(props.id, "up")}
             >
-              REMOVE
+              UP
             </button>
-            {this.props.children.length || this.state.showForm ? (
-              <button
-                type="button"
-                onClick={() => this.removeElements(this.props.item, true)}
-              >
-                REMOVE SUBLIST
-              </button>
-            ) : null}
-            {!this.state.showForm ? (
-              <button type="button" onClick={this.showInputForm}>
-                ADD SUBLIST
-              </button>
-            ) : null}
-          </div>
-        ) : null}
-        {!this.props.parentId || this.state.showForm ? (
-          <FormList id={this.props.id} />
-        ) : null}
-      </div>
-    );
-  }
+          ) : null}
+          {props.notLast ? (
+            <button
+              type="button"
+              onClick={() => replaceElements(props.id, "down")}
+            >
+              DOWN
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => removeElements(props.item, false)}
+          >
+            REMOVE
+          </button>
+          {props.children.length || showForm ? (
+            <button
+              type="button"
+              onClick={() => removeElements(props.item, true)}
+            >
+              REMOVE SUBLIST
+            </button>
+          ) : null}
+          {!showForm ? (
+            <button type="button" onClick={showInputForm}>
+              ADD SUBLIST
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+      {!props.parentId || showForm ? <FormList id={props.id} /> : null}
+    </div>
+  );
 }
 
 ElementList.propTypes = {

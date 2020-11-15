@@ -4,23 +4,23 @@ import { actionTypes } from "../store/actionTypes.js";
 import PropTypes from "prop-types";
 
 function FormList({ id }) {
-  const [state, setState] = useState({ text: "", error: "" });
+  const [formParams, setFormParams] = useState({ text: "", error: "" });
 
   function handleChange(e) {
-    if (state.error) {
-      setState((prevState) => {
+    if (formParams.error) {
+      setFormParams((prevState) => {
         return { ...prevState, error: "" };
       });
     }
 
-    setState((prevState) => {
+    setFormParams((prevState) => {
       return { ...prevState, text: e.target.value };
     });
   }
 
   function createElement(parentId) {
-    if (!state.text) {
-      setState((prevState) => {
+    if (!formParams.text) {
+      setFormParams((prevState) => {
         return { ...prevState, error: "Enter a least one character" };
       });
       return;
@@ -31,7 +31,7 @@ function FormList({ id }) {
     const element = {
       id: id,
       parentId: parentId,
-      name: state.text
+      name: formParams.text
     };
 
     store.dispatch({
@@ -49,7 +49,7 @@ function FormList({ id }) {
   }
 
   function clearForm() {
-    setState((prevState) => {
+    setFormParams((prevState) => {
       return { ...prevState, text: "" };
     });
   }
@@ -60,8 +60,8 @@ function FormList({ id }) {
         Element of list:
         <input
           type="text"
-          value={state.text}
-          placeholder={state.error}
+          value={formParams.text}
+          placeholder={formParams.error}
           onChange={handleChange}
         />
       </label>
